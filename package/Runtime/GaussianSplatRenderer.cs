@@ -322,7 +322,7 @@ namespace GaussianSplatting.Runtime
         [field: NonSerialized] public uint editSelectedSplats { get; private set; }
         [field: NonSerialized] public uint editDeletedSplats { get; private set; }
         [field: NonSerialized] public uint editCutSplats { get; private set; }
-        [field: NonSerialized] public Bounds editSelectedBounds { get; private set; }
+        [field: NonSerialized] public Bounds editSelectedBounds { get; set; }
 
         public GaussianSplatAsset asset => m_Asset;
         public int splatCount => m_SplatCount;
@@ -802,15 +802,21 @@ namespace GaussianSplatting.Runtime
 
         public void EditTranslateSelection(Vector3 localSpacePosDelta)
         {
-            if (!EnsureEditingBuffers()) return;
+            if (!EnsureEditingBuffers())
+            {
+                return;
+            }
 
             using var cmb = new CommandBuffer { name = "SplatTranslateSelection" };
+            
             SetAssetDataOnCS(cmb, KernelIndices.TranslateSelection);
 
             cmb.SetComputeVectorParam(m_CSSplatUtilities, Props.SelectionDelta, localSpacePosDelta);
 
             DispatchUtilsAndExecute(cmb, KernelIndices.TranslateSelection, m_SplatCount);
+            
             UpdateEditCountsAndBounds();
+            
             editModified = true;
         }
 
