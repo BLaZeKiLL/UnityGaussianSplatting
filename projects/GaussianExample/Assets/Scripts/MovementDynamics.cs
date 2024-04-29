@@ -17,6 +17,10 @@ namespace ICTGS
             var center = new Vector3();
             
             gs.editSelectedBounds = new Bounds(center, size);
+            
+            gs.EditUpdateSelection(new Vector2(382, 324), new Vector2(649, 118), Camera.main, false);
+            
+            gs.EditStoreSelectionMouseDown();
         }
 
         private void Update()
